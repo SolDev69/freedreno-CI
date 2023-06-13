@@ -66,5 +66,54 @@ meson build-android-arm --cross-file $workdir/mesa-main/android-arm -Dbuildtype=
 echo "Compiling build files ..." $'\n'
 ninja -C build-android-arm &> $workdir/ninja_log
 
-echo "Using patchelf to match soname ..." $'\n'
-cp $workdir/mesa
+echo "Using patchelf to match soname ..."  $'\n'
+cp $workdir/mesa-main/build-android-arm/src/freedreno/vulkan/libvulkan_freedreno.so $workdir
+cp $workdir/mesa-main/build-android-arm/src/android_stub/libhardware.so $workdir
+cp $workdir/mesa-main/build-android-arm/src/android_stub/libsync.so $workdir
+cp $workdir/mesa-main/build-android-arm/src/android_stub/libbacktrace.so $workdir
+cd $workdir
+patchelf --set-soname vulkan.adreno.so libvulkan_freedreno.so
+mv libvulkan_freedreno.so vulkan.adreno.so
+
+
+
+if ! [ -a vulkan.adreno.so ]; then
+	echo -e "$red Build failed! $nocolor" && exit 1
+fi
+
+
+
+echo "Prepare magisk module structure ..." $'\n'
+mkdir -p $driverdir
+cd $driverdir
+
+
+cat <<EOF >"meta.json"
+{
+  "schemaVersion": 1,
+  "name": "Mesa Turnip Adreno Driver 23.2.0",
+  "description": "Open-source Vulkan driver build from mesa drivers repo",
+  "author": "Mr_Purple_666",
+  "packageVersion": "T-Alpha",
+  "vendor": "Mesa",
+  "driverVersion": "23.2.0-devel",
+  "minApi": 30,
+  "libraryName": "vulkan.adreno.so"
+}
+EOF
+
+
+echo "Copy necessary files from work directory ..." $'\n'
+cp $workdir/vulkan.adreno.so $driverdir
+cp $workdir/libhardware.so $driverdir
+cp $workdir/libsync.so $driverdir
+cp $workdir/libbacktrace.so $driverdir
+
+
+
+echo "Packing files in to magisk module ..." $'\n'
+zip -r $workdir/turnip-23.2.0-T-Alpha_MrPurple.adpkg.zip * &> /dev/null
+if ! [ -a $workdir/turnip-23.2.0-T-Alpha_MrPurple.adpkg.zip ];
+	then echo -e "$red-Packing failed!$nocolor" && exit 1
+	else echo -e "$green-All done, you can take your module from here;$nocolor" && echo $workdir/turnip-23.0.0-T-Alpha_MrPurple.adpkg.zip
+fi

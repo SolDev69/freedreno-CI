@@ -67,7 +67,7 @@ echo "Compiling build files ..." $'\n'
 ninja -C build-android-arm &> $workdir/ninja_log
 
 echo "Using patchelf to match soname ..."  $'\n'
-find $workdir/mesa-main/ | grep '*.so'
+find $workdir/mesa-main/ -name "*.so*"
 cp $workdir/mesa-main/build-android-arm/src/freedreno/vulkan/libvulkan_freedreno.so $workdir
 cp $workdir/mesa-main/build-android-arm/src/android_stub/libhardware.so $workdir
 cp $workdir/mesa-main/build-android-arm/src/android_stub/libsync.so $workdir

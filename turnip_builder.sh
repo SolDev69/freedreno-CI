@@ -67,10 +67,11 @@ echo "Compiling build files ..." $'\n'
 ninja -C build-android-arm &> $workdir/ninja_log
 
 echo "Using patchelf to match soname ..."  $'\n'
-cp $workdir/mesa-main/build-android-arm/src/gallium/targets/vulkan/libvulkan_freedreno.so $workdir
-cp $workdir/mesa-main/build-android-arm/src/gallium/targets/android_stub/libhardware.so $workdir
-cp $workdir/mesa-main/build-android-arm/src/gallium/targets/android_stub/libsync.so $workdir
-cp $workdir/mesa-main/build-android-arm/src/gallium/targets/android_stub/libbacktrace.so $workdir
+find $workdir/mesa-main/ | grep '*.so'
+cp $workdir/mesa-main/build-android-arm/src/freedreno/vulkan/libvulkan_freedreno.so $workdir
+cp $workdir/mesa-main/build-android-arm/src/android_stub/libhardware.so $workdir
+cp $workdir/mesa-main/build-android-arm/src/android_stub/libsync.so $workdir
+cp $workdir/mesa-main/build-android-arm/src/android_stub/libbacktrace.so $workdir
 cd $workdir
 patchelf --set-soname vulkan.adreno.so libvulkan_freedreno.so
 mv libvulkan_freedreno.so vulkan.adreno.so

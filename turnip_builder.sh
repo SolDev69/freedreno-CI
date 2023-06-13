@@ -68,15 +68,15 @@ strip = '$ndk/aarch64-linux-android-strip'
 pkgconfig = ['env', 'PKG_CONFIG_LIBDIR=NDKDIR/pkgconfig', '/usr/bin/pkg-config']
 [host_machine]
 system = 'android'
-cpu_family = 'aarch64'
-cpu = 'armv8'
+cpu_family = 'armhf'
+cpu = 'arm'
 endian = 'little'
 EOF
 
 
 
 echo "Generating build files ..." $'\n'
-meson build-android-aarch64 --cross-file $workdir/mesa-main/android-aarch64 -Dbuildtype=release -Dplatforms=android -Dplatform-sdk-version=31 -Dandroid-stub=true -Dgallium-drivers= -Dvulkan-drivers=freedreno -Dfreedreno-kmds=kgsl -Db_lto=true &> $workdir/meson_log
+meson build-android-armhf --cross-file $workdir/mesa-main/android-ajf -Dbuildtype=release -Dplatforms=android -Dplatform-sdk-version=31 -Dandroid-stub=true -Dgallium-drivers= -Dvulkan-drivers=freedreno -Dfreedreno-kmds=kgsl -Db_lto=true &> $workdir/meson_log
 
 
 
